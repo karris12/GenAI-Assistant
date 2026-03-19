@@ -1,17 +1,11 @@
 import os
-from openai import OpenAI
+import google.generativeai as genai
 
 def review_devops(content: str) -> str:
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
+    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+    model = genai.GenerativeModel("gemini-1.5-flash")
     prompt = f"You are a DevOps expert. I am stuck with this error, I need your expertise to troubleshoot & resolve this error. Explain in very detail:\n\n{content}"
-
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
-
+    response = model.generate_content(prompt)
+    return response.text
     return response.choices[0].message.content
 
